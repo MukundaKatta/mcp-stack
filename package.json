@@ -1,0 +1,6 @@
+{
+  "name": "mcp-stack",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "engines": { "node": ">=18" }
+}
