@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.MukundaKatta/regex-test-mcp",
+  "description": "Trustworthy JS regex testing. Real offsets, named groups, safe against zero-width loops.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/MukundaKatta/mcp-stack",
+    "source": "github",
+    "subfolder": "packages/regex-test-mcp"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@mukundakatta/regex-test-mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" }
+    }
+  ]
+}

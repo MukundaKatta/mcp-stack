@@ -1,0 +1,19 @@
+{
+  "name": "@mukundakatta/csv-tools-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for reliable CSV parsing and generation. Handles quoting, embedded commas, BOMs, and ragged rows correctly.",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": { "csv-tools-mcp": "src/index.js" },
+  "files": ["src", "README.md", "LICENSE-MIT", "LICENSE-APACHE", "server.json"],
+  "scripts": { "start": "node src/index.js", "test": "node --test tests/test.js" },
+  "keywords": ["mcp", "csv", "parsing", "llm"],
+  "author": "Mukunda Katta <mukunda.vjcs6@gmail.com>",
+  "license": "MIT OR Apache-2.0",
+  "repository": { "type": "git", "url": "git+https://github.com/MukundaKatta/mcp-stack.git", "directory": "packages/csv-tools-mcp" },
+  "homepage": "https://github.com/MukundaKatta/mcp-stack/tree/main/packages/csv-tools-mcp",
+  "bugs": "https://github.com/MukundaKatta/mcp-stack/issues",
+  "engines": { "node": ">=18" },
+  "dependencies": { "@modelcontextprotocol/sdk": "^1.29.0" },
+  "mcpName": "io.github.MukundaKatta/csv-tools-mcp"
+}

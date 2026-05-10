@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.MukundaKatta/sqlfmt-mcp",
+  "description": "Deterministic SQL formatting across 19 dialects (postgres, mysql, snowflake, bigquery, etc.).",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/MukundaKatta/mcp-stack",
+    "source": "github",
+    "subfolder": "packages/sqlfmt-mcp"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@mukundakatta/sqlfmt-mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" }
+    }
+  ]
+}

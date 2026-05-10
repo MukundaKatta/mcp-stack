@@ -1,0 +1,19 @@
+{
+  "name": "@mukundakatta/regex-test-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for trustworthy regex testing. Returns real match offsets, group dicts, and full vs partial matches.",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": { "regex-test-mcp": "src/index.js" },
+  "files": ["src", "README.md", "LICENSE-MIT", "LICENSE-APACHE", "server.json"],
+  "scripts": { "start": "node src/index.js", "test": "node --test tests/test.js" },
+  "keywords": ["mcp", "regex", "regexp", "llm", "pattern"],
+  "author": "Mukunda Katta <mukunda.vjcs6@gmail.com>",
+  "license": "MIT OR Apache-2.0",
+  "repository": { "type": "git", "url": "git+https://github.com/MukundaKatta/mcp-stack.git", "directory": "packages/regex-test-mcp" },
+  "homepage": "https://github.com/MukundaKatta/mcp-stack/tree/main/packages/regex-test-mcp",
+  "bugs": "https://github.com/MukundaKatta/mcp-stack/issues",
+  "engines": { "node": ">=18" },
+  "dependencies": { "@modelcontextprotocol/sdk": "^1.29.0" },
+  "mcpName": "io.github.MukundaKatta/regex-test-mcp"
+}

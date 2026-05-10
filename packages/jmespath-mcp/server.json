@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.MukundaKatta/jmespath-mcp",
+  "description": "Run JMESPath queries against JSON. Pure JS, no native binary needed.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/MukundaKatta/mcp-stack",
+    "source": "github",
+    "subfolder": "packages/jmespath-mcp"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@mukundakatta/jmespath-mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" }
+    }
+  ]
+}
