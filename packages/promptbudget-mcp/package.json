@@ -1,6 +1,6 @@
 {
   "name": "@mukundakatta/promptbudget-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server for token-budget-aware text truncation. Helps an LLM fit text into a context window mid-task.",
   "type": "module",
   "main": "src/index.js",
@@ -40,5 +40,6 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0"
-  }
+  },
+  "mcpName": "io.github.MukundaKatta/promptbudget-mcp"
 }

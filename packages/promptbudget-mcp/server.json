@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "io.github.MukundaKatta/promptbudget-mcp",
   "description": "Token-budget-aware text truncation. Fit text into context windows with 4 strategies.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": {
     "url": "https://github.com/MukundaKatta/mcp-stack",
     "source": "github",
@@ -13,8 +13,10 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@mukundakatta/promptbudget-mcp",
-      "version": "0.1.0",
-      "transport": { "type": "stdio" }
+      "version": "0.1.1",
+      "transport": {
+        "type": "stdio"
+      }
     }
   ]
 }
