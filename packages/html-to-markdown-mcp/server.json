@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.MukundaKatta/html-to-markdown-mcp",
+  "description": "Convert HTML to Markdown or strip to plain text. For web-scraping agents.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/MukundaKatta/mcp-stack",
+    "source": "github",
+    "subfolder": "packages/html-to-markdown-mcp"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@mukundakatta/html-to-markdown-mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" }
+    }
+  ]
+}

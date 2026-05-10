@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.MukundaKatta/timezone-mcp",
+  "description": "IANA timezone conversions with real DST rules.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/MukundaKatta/mcp-stack",
+    "source": "github",
+    "subfolder": "packages/timezone-mcp"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@mukundakatta/timezone-mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" }
+    }
+  ]
+}

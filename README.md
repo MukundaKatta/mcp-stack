@@ -1,6 +1,6 @@
 # mcp-stack
 
-Nine small MCP servers for everyday LLM / RAG / agent work. Each ships
+Fourteen small MCP servers for everyday LLM / RAG / agent work. Each ships
 independently on npm, listed in the [official MCP Registry](https://registry.modelcontextprotocol.io),
 and is callable from Claude Desktop, Cursor, Cline, Windsurf, Zed, and any
 other MCP-compatible client.
@@ -23,6 +23,11 @@ other MCP-compatible client.
 | [`@mukundakatta/jmespath-mcp`](./packages/jmespath-mcp/) | `json_query` | LLM needs deep JSON traversal (filters, projections, pipes) without hallucinating |
 | [`@mukundakatta/diff-mcp`](./packages/diff-mcp/) | `unified_diff`, `apply_patch`, `parse_patch` | Code-review or code-edit agent needs character-precise patches |
 | [`@mukundakatta/sqlfmt-mcp`](./packages/sqlfmt-mcp/) | `format_sql`, `list_dialects` | Deterministic SQL formatting across 19 dialects |
+| [`@mukundakatta/shellquote-mcp`](./packages/shellquote-mcp/) | `quote_bash`, `quote_bash_argv`, `quote_cmd`, `quote_powershell` | Safe shell argument escaping; LLMs constantly mishandle quotes/$VAR |
+| [`@mukundakatta/json5-mcp`](./packages/json5-mcp/) | `parse_json5`, `to_json5`, `to_strict_json` | LLM emitted JSON-with-comments / trailing-commas; round-trip to strict JSON |
+| [`@mukundakatta/toml-yaml-json-mcp`](./packages/toml-yaml-json-mcp/) | `parse`, `format`, `convert` | TOML / YAML / JSON conversion (LLMs especially mishandle TOML) |
+| [`@mukundakatta/timezone-mcp`](./packages/timezone-mcp/) | `convert_tz`, `now_in`, `tz_offset` | IANA timezone math with real DST rules; LLMs hallucinate offsets |
+| [`@mukundakatta/html-to-markdown-mcp`](./packages/html-to-markdown-mcp/) | `html_to_md`, `extract_text` | Web-scraping agents need clean Markdown / text from HTML |
 
 ## Sibling libraries
 
@@ -52,8 +57,13 @@ Add to your MCP client config. Example for Claude Desktop:
     "csv-tools":    { "command": "npx", "args": ["-y", "@mukundakatta/csv-tools-mcp"] },
     "regex-test":   { "command": "npx", "args": ["-y", "@mukundakatta/regex-test-mcp"] },
     "jmespath":     { "command": "npx", "args": ["-y", "@mukundakatta/jmespath-mcp"] },
-    "diff":         { "command": "npx", "args": ["-y", "@mukundakatta/diff-mcp"] },
-    "sqlfmt":       { "command": "npx", "args": ["-y", "@mukundakatta/sqlfmt-mcp"] }
+    "diff":           { "command": "npx", "args": ["-y", "@mukundakatta/diff-mcp"] },
+    "sqlfmt":         { "command": "npx", "args": ["-y", "@mukundakatta/sqlfmt-mcp"] },
+    "shellquote":     { "command": "npx", "args": ["-y", "@mukundakatta/shellquote-mcp"] },
+    "json5":          { "command": "npx", "args": ["-y", "@mukundakatta/json5-mcp"] },
+    "toml-yaml-json": { "command": "npx", "args": ["-y", "@mukundakatta/toml-yaml-json-mcp"] },
+    "timezone":       { "command": "npx", "args": ["-y", "@mukundakatta/timezone-mcp"] },
+    "html-to-md":     { "command": "npx", "args": ["-y", "@mukundakatta/html-to-markdown-mcp"] }
   }
 }
 ```

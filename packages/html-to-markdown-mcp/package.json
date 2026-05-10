@@ -1,0 +1,22 @@
+{
+  "name": "@mukundakatta/html-to-markdown-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for HTML → Markdown conversion. For web-scraping and read-the-page agents that want clean text.",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": { "html-to-markdown-mcp": "src/index.js" },
+  "files": ["src", "README.md", "LICENSE-MIT", "LICENSE-APACHE", "server.json"],
+  "scripts": { "start": "node src/index.js", "test": "node --test tests/test.js" },
+  "keywords": ["mcp", "html", "markdown", "scraping", "llm"],
+  "author": "Mukunda Katta <mukunda.vjcs6@gmail.com>",
+  "license": "MIT OR Apache-2.0",
+  "repository": { "type": "git", "url": "git+https://github.com/MukundaKatta/mcp-stack.git", "directory": "packages/html-to-markdown-mcp" },
+  "homepage": "https://github.com/MukundaKatta/mcp-stack/tree/main/packages/html-to-markdown-mcp",
+  "bugs": "https://github.com/MukundaKatta/mcp-stack/issues",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "turndown": "^7.2.0"
+  },
+  "mcpName": "io.github.MukundaKatta/html-to-markdown-mcp"
+}

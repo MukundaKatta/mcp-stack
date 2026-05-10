@@ -1,0 +1,19 @@
+{
+  "name": "@mukundakatta/shellquote-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for safe shell argument escaping (bash, sh, cmd.exe, PowerShell). Stops LLM-generated shell commands from breaking on quotes, spaces, $vars, and backslashes.",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": { "shellquote-mcp": "src/index.js" },
+  "files": ["src", "README.md", "LICENSE-MIT", "LICENSE-APACHE", "server.json"],
+  "scripts": { "start": "node src/index.js", "test": "node --test tests/test.js" },
+  "keywords": ["mcp", "shell", "escape", "security", "llm"],
+  "author": "Mukunda Katta <mukunda.vjcs6@gmail.com>",
+  "license": "MIT OR Apache-2.0",
+  "repository": { "type": "git", "url": "git+https://github.com/MukundaKatta/mcp-stack.git", "directory": "packages/shellquote-mcp" },
+  "homepage": "https://github.com/MukundaKatta/mcp-stack/tree/main/packages/shellquote-mcp",
+  "bugs": "https://github.com/MukundaKatta/mcp-stack/issues",
+  "engines": { "node": ">=18" },
+  "dependencies": { "@modelcontextprotocol/sdk": "^1.29.0" },
+  "mcpName": "io.github.MukundaKatta/shellquote-mcp"
+}
