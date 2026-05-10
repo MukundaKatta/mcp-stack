@@ -1,8 +1,13 @@
 #!/usr/bin/env node
-// promptbudget-mcp — MCP server for token-budget-aware text truncation.
+// promptbudget-mcp — MCP server for token-budget-aware text handling.
 //
-// Exposes one tool: `truncate_to_token_budget(text, max_tokens, strategy)`.
-// Useful when an LLM needs to fit text into a context window mid-task.
+// Three tools:
+//   - count_tokens: pre-flight check, optionally with a budget
+//   - truncate_to_token_budget: trim text to fit
+//   - chunk_to_budget: split long text into multiple under-budget chunks
+//
+// Useful when an LLM is preparing context, fitting chat history, or feeding
+// long source documents through a prompt.
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
@@ -21,6 +26,26 @@ export function countTokens(text, charsPerToken = DEFAULT_CHARS_PER_TOKEN) {
   const chars = Array.from(text).length;
   const cpt = Math.max(1, charsPerToken);
   return Math.ceil(chars / cpt);
+}
+
+/**
+ * Standalone count + optional budget check. Returns the count, the budget
+ * (echoed back if provided), whether it fits, and the overflow amount.
+ */
+export function countWithBudget(text, options = {}) {
+  const cpt = options.chars_per_token ?? DEFAULT_CHARS_PER_TOKEN;
+  const tokens = countTokens(text, cpt);
+  const max = options.max_tokens;
+  if (max === undefined || max === null) {
+    return { tokens, chars_per_token: cpt };
+  }
+  return {
+    tokens,
+    max_tokens: max,
+    fits: tokens <= max,
+    overflow_tokens: Math.max(0, tokens - max),
+    chars_per_token: cpt,
+  };
 }
 
 function truncateHead(text, maxTokens, charsPerToken) {
@@ -65,7 +90,6 @@ export function truncateToTokenBudget(
   }
 
   let out;
-  let used = strategy;
   switch (strategy) {
     case "head":
       out = truncateHead(text, maxTokens, cpt);
@@ -88,14 +112,57 @@ export function truncateToTokenBudget(
         truncateHead(text, h, cpt) + marker + truncateTail(text, t, cpt);
       break;
     }
-    // No default — strategy was validated up front.
   }
 
   return {
     truncated: out,
     original_tokens: original,
     truncated_tokens: countTokens(out, cpt),
-    strategy_used: used,
+    strategy_used: strategy,
+  };
+}
+
+/**
+ * Split a long text into N chunks, each at most `max_tokens` tokens, with
+ * optional overlap between adjacent chunks (useful for RAG ingestion so a
+ * sentence isn't split across two chunks with no shared context).
+ *
+ * Boundaries respect Unicode codepoints (Array.from), not raw bytes.
+ */
+export function chunkToBudget(text, maxTokens, options = {}) {
+  if (!Number.isInteger(maxTokens) || maxTokens <= 0) {
+    throw new Error("max_tokens must be a positive integer");
+  }
+  const cpt = Math.max(1, options.chars_per_token ?? DEFAULT_CHARS_PER_TOKEN);
+  const overlap = Math.max(0, options.overlap_tokens ?? 0);
+  if (overlap >= maxTokens) {
+    throw new Error("overlap_tokens must be strictly less than max_tokens");
+  }
+
+  const chars = Array.from(text);
+  if (chars.length === 0) {
+    return { chunks: [], chunk_count: 0, total_tokens: 0 };
+  }
+
+  const chunkChars = maxTokens * cpt;
+  const overlapChars = overlap * cpt;
+  const stepChars = chunkChars - overlapChars; // forward step per chunk
+
+  const chunks = [];
+  let start = 0;
+  while (start < chars.length) {
+    const end = Math.min(chars.length, start + chunkChars);
+    chunks.push(chars.slice(start, end).join(""));
+    if (end === chars.length) break;
+    start += stepChars;
+  }
+
+  return {
+    chunks,
+    chunk_count: chunks.length,
+    total_tokens: countTokens(text, cpt),
+    chunk_max_tokens: maxTokens,
+    overlap_tokens: overlap,
   };
 }
 
@@ -107,45 +174,79 @@ function clamp01(x) {
 
 const TOOLS = [
   {
-    name: "truncate_to_token_budget",
+    name: "count_tokens",
     description:
-      "Truncate text to fit within a token budget. Use when you need to put long text into an LLM context window without going over a token limit. Supports four strategies: head (keep beginning), tail (keep end, good for chat history), head_tail (drop the middle, keep both ends), and smart_cut (head_tail with a visible cut marker).",
+      "Count the approximate token usage of a text. Optionally compare against a budget and return a 'fits' flag plus overflow. Use as a pre-flight check before assembling a prompt: if count > budget, decide whether to truncate or chunk.",
     inputSchema: {
       type: "object",
       properties: {
-        text: { type: "string", description: "The text to truncate." },
+        text: { type: "string" },
         max_tokens: {
           type: "integer",
           minimum: 0,
-          description: "Maximum tokens the result may use.",
-        },
-        strategy: {
-          type: "string",
-          enum: ["head", "tail", "head_tail", "smart_cut"],
-          description: "Which truncation strategy to apply.",
-          default: "tail",
+          description: "Optional. If provided, response includes 'fits' and 'overflow_tokens'.",
         },
         chars_per_token: {
           type: "integer",
           minimum: 1,
-          description:
-            "Approx chars per token. Default 4 (OpenAI rule of thumb). For accurate token accounting against a real model, use a real tokenizer instead.",
           default: 4,
+          description: "Approx chars per token. Default 4 (OpenAI rule of thumb).",
         },
+      },
+      required: ["text"],
+    },
+  },
+  {
+    name: "truncate_to_token_budget",
+    description:
+      "Truncate text to fit within a token budget. Four strategies: head (keep beginning), tail (keep end, good for chat history), head_tail (drop the middle, keep both ends), and smart_cut (head_tail with a visible cut marker). Use when you need to put long text into an LLM context window without going over a token limit.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The text to truncate." },
+        max_tokens: { type: "integer", minimum: 0 },
+        strategy: {
+          type: "string",
+          enum: ["head", "tail", "head_tail", "smart_cut"],
+          default: "tail",
+        },
+        chars_per_token: { type: "integer", minimum: 1, default: 4 },
         head_ratio: {
           type: "number",
           minimum: 0,
           maximum: 1,
-          description:
-            "For head_tail and smart_cut: fraction of the budget reserved for the head. Default 0.5.",
           default: 0.5,
+          description: "For head_tail / smart_cut: fraction reserved for the head.",
         },
         marker: {
           type: "string",
-          description:
-            "For smart_cut: marker inserted between head and tail. Default '\\n[...]\\n'.",
           default: "\n[...]\n",
+          description: "For smart_cut: marker inserted between head and tail.",
         },
+      },
+      required: ["text", "max_tokens"],
+    },
+  },
+  {
+    name: "chunk_to_budget",
+    description:
+      "Split a long text into multiple chunks, each at most max_tokens tokens, with optional overlap between adjacent chunks. Use when you have source material too long for one prompt and want to feed it through in pieces (for example, RAG ingestion or a fan-out summarize pattern). Overlap is useful so a sentence at a boundary still has surrounding context in the next chunk.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string" },
+        max_tokens: {
+          type: "integer",
+          minimum: 1,
+          description: "Maximum tokens per chunk.",
+        },
+        overlap_tokens: {
+          type: "integer",
+          minimum: 0,
+          default: 0,
+          description: "Tokens shared between adjacent chunks. Must be strictly less than max_tokens.",
+        },
+        chars_per_token: { type: "integer", minimum: 1, default: 4 },
       },
       required: ["text", "max_tokens"],
     },
@@ -153,7 +254,7 @@ const TOOLS = [
 ];
 
 const server = new Server(
-  { name: "promptbudget-mcp", version: "0.1.0" },
+  { name: "promptbudget-mcp", version: "0.2.0" },
   { capabilities: { tools: {} } },
 );
 
@@ -161,20 +262,36 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }))
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
-  if (name !== "truncate_to_token_budget") {
-    throw new Error(`unknown tool: ${name}`);
-  }
   try {
-    const result = truncateToTokenBudget(
-      args.text,
-      args.max_tokens,
-      args.strategy ?? "tail",
-      {
-        chars_per_token: args.chars_per_token,
-        head_ratio: args.head_ratio,
-        marker: args.marker,
-      },
-    );
+    let result;
+    switch (name) {
+      case "count_tokens":
+        result = countWithBudget(args.text, {
+          max_tokens: args.max_tokens,
+          chars_per_token: args.chars_per_token,
+        });
+        break;
+      case "truncate_to_token_budget":
+        result = truncateToTokenBudget(
+          args.text,
+          args.max_tokens,
+          args.strategy ?? "tail",
+          {
+            chars_per_token: args.chars_per_token,
+            head_ratio: args.head_ratio,
+            marker: args.marker,
+          },
+        );
+        break;
+      case "chunk_to_budget":
+        result = chunkToBudget(args.text, args.max_tokens, {
+          overlap_tokens: args.overlap_tokens,
+          chars_per_token: args.chars_per_token,
+        });
+        break;
+      default:
+        throw new Error(`unknown tool: ${name}`);
+    }
     return { content: [{ type: "text", text: JSON.stringify(result) }] };
   } catch (e) {
     return {
@@ -184,7 +301,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 });
 
-// Start the server. Skipped when imported (e.g., from tests).
 if (import.meta.url === `file://${process.argv[1]}`) {
   await server.connect(new StdioServerTransport());
 }
