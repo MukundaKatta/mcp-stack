@@ -17,7 +17,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@iarna/toml": "^2.2.5",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.2.0"
   },
   "mcpName": "io.github.MukundaKatta/toml-yaml-json-mcp"
 }
