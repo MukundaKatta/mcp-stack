@@ -15,7 +15,7 @@
   "bugs": "https://github.com/MukundaKatta/mcp-stack/issues",
   "engines": { "node": ">=18" },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "jmespath": "^0.16.0"
   },
   "mcpName": "io.github.MukundaKatta/jmespath-mcp"
