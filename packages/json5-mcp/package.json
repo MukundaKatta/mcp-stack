@@ -15,7 +15,7 @@
   "bugs": "https://github.com/MukundaKatta/mcp-stack/issues",
   "engines": { "node": ">=18" },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "json5": "^2.2.3"
   },
   "mcpName": "io.github.MukundaKatta/json5-mcp"
